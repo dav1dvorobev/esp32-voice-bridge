@@ -1,0 +1,360 @@
+:root {
+    --bg: #0b0d10;
+    --surface: #15181f;
+    --surface-active: #1b1c27;
+    --text: #f6f7fb;
+    --muted: #a8b0bf;
+    --accent: #7c5cff;
+    --accent-soft: #b7a7ff;
+    --ok: #39c98a;
+    --danger: #ff667d;
+    --glow: rgba(124, 92, 255, 0.42);
+    --button-radius: 999px;
+    --feedback-ring-size: 96px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background:
+        linear-gradient(145deg, rgba(57, 201, 138, 0.08), transparent 36%),
+        linear-gradient(315deg, rgba(124, 92, 255, 0.12), transparent 42%),
+        var(--bg);
+    font-family:
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+.stage {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    padding: 24px;
+}
+
+.esp32-address {
+    width: min(300px, calc(100vw - 48px));
+    height: 40px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(21, 24, 31, 0.78);
+    color: var(--text);
+    outline: none;
+    padding: 0 12px;
+    font:
+        14px/40px system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    letter-spacing: 0;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.esp32-address:focus {
+    border-color: rgba(124, 92, 255, 0.65);
+    box-shadow:
+        0 0 0 3px rgba(124, 92, 255, 0.16),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.esp32-address::placeholder {
+    color: rgba(168, 176, 191, 0.72);
+}
+
+.voice-shell {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    display: grid;
+    place-items: center;
+    transition:
+        width 0.35s ease,
+        height 0.35s ease;
+}
+
+.voice-shell::after {
+    content: "";
+    position: absolute;
+    width: var(--feedback-ring-size);
+    height: var(--feedback-ring-size);
+    border: 3px solid transparent;
+    border-radius: var(--button-radius);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.voice-shell.feedback-ok::after {
+    animation: feedbackRing 1s ease both;
+    border-color: var(--ok);
+    box-shadow: 0 0 22px rgba(57, 201, 138, 0.58);
+}
+
+.voice-shell.feedback-error::after {
+    animation: feedbackRing 1s ease both;
+    border-color: var(--danger);
+    box-shadow: 0 0 22px rgba(255, 102, 125, 0.58);
+}
+
+.voice-shell:has(.voice-button.is-holding) {
+    width: 300px;
+}
+
+.voice-button {
+    position: relative;
+    width: 92px;
+    height: 92px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--button-radius);
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.06),
+            rgba(255, 255, 255, 0.02)
+        ),
+        var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    outline: none;
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    transition:
+        width 0.35s ease,
+        border-radius 0.35s ease,
+        background 0.35s ease,
+        box-shadow 0.35s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.voice-button.is-holding {
+    width: 300px;
+    border-radius: 30px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(124, 92, 255, 0.18),
+            rgba(124, 92, 255, 0.06)
+        ),
+        var(--surface-active);
+    box-shadow:
+        0 22px 70px rgba(0, 0, 0, 0.55),
+        0 0 50px var(--glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.mic-icon {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    opacity: 1;
+    transform: scale(1);
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+}
+
+.voice-button.is-holding .mic-icon {
+    opacity: 0;
+    transform: scale(0.65);
+}
+
+.wave-box {
+    width: 100%;
+    height: 100%;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+        opacity 0.2s ease 0.08s,
+        transform 0.2s ease 0.08s;
+    pointer-events: none;
+}
+
+.voice-button.is-holding .wave-box {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.live-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    box-shadow: 0 0 18px rgba(196, 181, 253, 0.9);
+    flex: 0 0 auto;
+    animation: dotPulse 1s ease-in-out infinite;
+}
+
+.wave {
+    flex: 1;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.wave span {
+    width: 5px;
+    height: 16px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--accent-soft), var(--accent));
+    box-shadow: 0 0 14px rgba(124, 92, 255, 0.55);
+    animation: waveMove 0.9s ease-in-out infinite;
+    animation-play-state: paused;
+}
+
+.voice-button.is-holding .wave span {
+    animation-play-state: running;
+}
+
+.wave span:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.wave span:nth-child(2) {
+    animation-delay: 0.08s;
+}
+
+.wave span:nth-child(3) {
+    animation-delay: 0.16s;
+}
+
+.wave span:nth-child(4) {
+    animation-delay: 0.24s;
+}
+
+.wave span:nth-child(5) {
+    animation-delay: 0.32s;
+}
+
+.wave span:nth-child(6) {
+    animation-delay: 0.4s;
+}
+
+.wave span:nth-child(7) {
+    animation-delay: 0.48s;
+}
+
+.wave span:nth-child(8) {
+    animation-delay: 0.56s;
+}
+
+.wave span:nth-child(9) {
+    animation-delay: 0.64s;
+}
+
+.wave span:nth-child(10) {
+    animation-delay: 0.72s;
+}
+
+.wave span:nth-child(11) {
+    animation-delay: 0.8s;
+}
+
+.wave span:nth-child(12) {
+    animation-delay: 0.88s;
+}
+
+.ring,
+.ring::before,
+.ring::after {
+    content: "";
+    position: absolute;
+    inset: -10px;
+    border-radius: inherit;
+    border: 1px solid rgba(124, 92, 255, 0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.voice-button.is-holding .ring {
+    animation: ringPulse 1.8s ease-out infinite;
+}
+
+.voice-button.is-holding .ring::before {
+    animation: ringPulse 1.8s ease-out infinite 0.45s;
+}
+
+.voice-button.is-holding .ring::after {
+    animation: ringPulse 1.8s ease-out infinite 0.9s;
+}
+
+@keyframes waveMove {
+    0%,
+    100% {
+        height: 14px;
+        opacity: 0.55;
+    }
+
+    50% {
+        height: 48px;
+        opacity: 1;
+    }
+}
+
+@keyframes dotPulse {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.25);
+        opacity: 0.65;
+    }
+}
+
+@keyframes ringPulse {
+    0% {
+        opacity: 0.55;
+        transform: scale(0.95);
+        border-color: rgba(124, 92, 255, 0.32);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.14);
+        border-color: rgba(124, 92, 255, 0);
+    }
+}
+
+@keyframes feedbackRing {
+    0% {
+        opacity: 0;
+        transform: scale(0.96);
+    }
+
+    18% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    72% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+}
