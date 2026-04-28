@@ -1,0 +1,9 @@
+services:
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: Dockerfile
+        environment:
+            FRONTEND_PORT: ${FRONTEND_PORT}
+        ports:
+            - "${FRONTEND_PORT}:${FRONTEND_PORT}"
