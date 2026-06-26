@@ -1,6 +1,6 @@
 <p align="center"><strong>Voice Bridge</strong> зажал, сказал, отпустил
 <p align="center">
-  <img src="assets/preview.gif" alt="preview" width="80%" />
+  <img src="img/preview.gif" alt="preview" width="80%" />
 </p>
 </br>
 </p>
